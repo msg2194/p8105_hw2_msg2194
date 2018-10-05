@@ -34,8 +34,7 @@ skimr::skim(subway_data)
 ### Retain the variables: line, station name, station latitude / longitude, routes served, entry, vending, entrance type, and ADA compliance.
 ```{r select}
 select(subway_data, line, station_name, station_latitude,
-       station_longitude, entry, vending, entrance_type, ada, route1, route2,
-       route3, route4, route5, route6, route7, route8, route9, route10, route11)
+       station_longitude, entry, vending, entrance_type, ada, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11)
 ```
 
 
@@ -51,7 +50,8 @@ Originally, this dataset 1,868 observations and 32 variables. I cleaned the vari
 ### How many distinct stations are there? Note that stations are identified both by name and by line (e.g. 125th St A/B/C/D; 125st 1; 125st 4/5); the distinct function may be useful here.
 
 ```{r distinct_stations}
-distinct(subway_data, station_name, line, ada, .keep_all = FALSE) %>% 
+distinct(subway_data, 
+         station_name, line, ada, .keep_all = FALSE) %>% 
   count(ada)
 ```
 There are a total of 465 distinct stations.
@@ -61,11 +61,41 @@ Of the 465 distinct stations, 84 are ADA compliant.
 
 ### What proportion of station entrances / exits without vending allow entrance?
 ```{r no_vending_yes_entry}
-filter(subway_data, entry == "YES", vending == "NO")
+filter(subway_data, 
+       entry == "YES", vending == "NO")
 ```
 This filter yields a tibble consisting of 69 observations meeting the criteria for entrances/exits that allow entry but do not allow vending. Thus, the proportion is 69 out of 1,868.
 
 ### Reformat data so that route number and route name are distinct variables. How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
 
+(pending)
 
+# Problem 2
+```{r trash}
+wheel = readxl::read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 1, range = "A2:N336") %>%
+  janitor::clean_names(wheel) %>% 
+  names(wheel) %>% 
+  filter(wheel, !is.na(dumpster)) %>% 
+  skimr::skim(wheel) %>% 
+  mutate(wheel, sports_balls = round(sports_balls, digits = 0)) %>% 
+  mutate(wheel, sports_balls = as.integer(sports_balls))
+```
+After removing rows with blank values for the valiable "dumpster," there are a total of 285 rows remaining.
 
+```{r rc_precipitation_16_17}
+ppt_16_data = readxl::read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2016 Precipitation", range = "A2:B14") %>%
+  mutate(ppt_16_data, yr = 2016) %>% 
+
+ppt_17_data = readxl::read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", range = "A2:B14") %>%
+  mutate(ppt_17_data, yr = 2017)
+
+```
+
+```{r bind_precipitation_16_17}
+ppt_16_17 = bind_rows(ppt_16_data, ppt_17_data) %>%
+  janitor::clean_names(ppt_16_17) %>%
+  mutate(ppt_16_17, month = month.name[month])
+```
+### Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in both resulting datasets, and give examples of key variables. For available data, what was the total precipitation in 2017? What was the median number of sports balls in a dumpster in 2016?
+
+The Mr. Trash Wheel data has multiple sheets with information that is not necessarily interelated. The original Mr. Trash Wheel sheet has a total of 14 variables and 285 observations (made apparent after removing entries for which 'Dumpster' was blank). The data on this first sheet is not fully tidy, as there are monthly subtotals truncating the data frame throughout. In order for the dataframe to be tidy, these had to be removed as part of the cleaning pipeline using 'filter'. This sheet also counts the different types of trash, but some of these seem to be estimates since they are recorded as decimal numbers, specifically the number of balls disposed. Since the amount of trash collected is said to be correlated with the amount of precipitation, the authors sought to also record monthly precipitation patterns for a few years in different sheets. However, they do not explicitly join the precipitation sheet with the Mr. Trash Wheel sheet. In joining the rows of precipitation sheets for 2016 and 2017 using 'bind_rows', we now have a dataframe with three variables and 24 observations. Some key variables in these data include the dumsper number, since this is the smallest unit of data and has only unique values. Other key variables include weight and volume of waste, since it tells of the performance of the device and its environmental impact on the City of Baltimore. The amount of precipitation is also key, because it would help an analyst to determine total environmental impact adjusting for precipitation amount. Finally, the total precipitation for 2016 was 39.95 inches and for 2017, 32.93 inches.
