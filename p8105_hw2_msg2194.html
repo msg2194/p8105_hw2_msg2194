@@ -128,7 +128,283 @@ $(document).ready(function () {
 </div>
 
 
-
+<div id="problem-1" class="section level1">
+<h1>Problem 1</h1>
+<div id="read-and-clean-the-nyc-transit-data-for-entrances-and-exits-at-each-subway-station." class="section level2">
+<h2>Read and clean the NYC transit data for entrances and exits at each subway station.</h2>
+<div id="first-import-the-csv-file-and-clean-the-variable-names." class="section level3">
+<h3>First, import the csv file and clean the variable names.</h3>
+<pre class="r"><code>subway_data = read_csv(file = &quot;./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_character(),
+##   `Station Latitude` = col_double(),
+##   `Station Longitude` = col_double(),
+##   Route8 = col_integer(),
+##   Route9 = col_integer(),
+##   Route10 = col_integer(),
+##   Route11 = col_integer(),
+##   ADA = col_logical(),
+##   `Free Crossover` = col_logical(),
+##   `Entrance Latitude` = col_double(),
+##   `Entrance Longitude` = col_double()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre class="r"><code>names(subway_data)</code></pre>
+<pre><code>##  [1] &quot;Division&quot;           &quot;Line&quot;               &quot;Station Name&quot;      
+##  [4] &quot;Station Latitude&quot;   &quot;Station Longitude&quot;  &quot;Route1&quot;            
+##  [7] &quot;Route2&quot;             &quot;Route3&quot;             &quot;Route4&quot;            
+## [10] &quot;Route5&quot;             &quot;Route6&quot;             &quot;Route7&quot;            
+## [13] &quot;Route8&quot;             &quot;Route9&quot;             &quot;Route10&quot;           
+## [16] &quot;Route11&quot;            &quot;Entrance Type&quot;      &quot;Entry&quot;             
+## [19] &quot;Exit Only&quot;          &quot;Vending&quot;            &quot;Staffing&quot;          
+## [22] &quot;Staff Hours&quot;        &quot;ADA&quot;                &quot;ADA Notes&quot;         
+## [25] &quot;Free Crossover&quot;     &quot;North South Street&quot; &quot;East West Street&quot;  
+## [28] &quot;Corner&quot;             &quot;Entrance Latitude&quot;  &quot;Entrance Longitude&quot;
+## [31] &quot;Station Location&quot;   &quot;Entrance Location&quot;</code></pre>
+<pre class="r"><code>subway_data = janitor::clean_names(subway_data)
+names(subway_data)</code></pre>
+<pre><code>##  [1] &quot;division&quot;           &quot;line&quot;               &quot;station_name&quot;      
+##  [4] &quot;station_latitude&quot;   &quot;station_longitude&quot;  &quot;route1&quot;            
+##  [7] &quot;route2&quot;             &quot;route3&quot;             &quot;route4&quot;            
+## [10] &quot;route5&quot;             &quot;route6&quot;             &quot;route7&quot;            
+## [13] &quot;route8&quot;             &quot;route9&quot;             &quot;route10&quot;           
+## [16] &quot;route11&quot;            &quot;entrance_type&quot;      &quot;entry&quot;             
+## [19] &quot;exit_only&quot;          &quot;vending&quot;            &quot;staffing&quot;          
+## [22] &quot;staff_hours&quot;        &quot;ada&quot;                &quot;ada_notes&quot;         
+## [25] &quot;free_crossover&quot;     &quot;north_south_street&quot; &quot;east_west_street&quot;  
+## [28] &quot;corner&quot;             &quot;entrance_latitude&quot;  &quot;entrance_longitude&quot;
+## [31] &quot;station_location&quot;   &quot;entrance_location&quot;</code></pre>
+</div>
+<div id="second-inspect-the-dataset-using-various-tools." class="section level3">
+<h3>Second, inspect the dataset using various tools.</h3>
+<pre class="r"><code>subway_data</code></pre>
+<pre><code>## # A tibble: 1,868 x 32
+##    division line  station_name station_latitude station_longitu… route1
+##    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;                   &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt; 
+##  1 BMT      4 Av… 25th St                  40.7            -74.0 R     
+##  2 BMT      4 Av… 25th St                  40.7            -74.0 R     
+##  3 BMT      4 Av… 36th St                  40.7            -74.0 N     
+##  4 BMT      4 Av… 36th St                  40.7            -74.0 N     
+##  5 BMT      4 Av… 36th St                  40.7            -74.0 N     
+##  6 BMT      4 Av… 45th St                  40.6            -74.0 R     
+##  7 BMT      4 Av… 45th St                  40.6            -74.0 R     
+##  8 BMT      4 Av… 45th St                  40.6            -74.0 R     
+##  9 BMT      4 Av… 45th St                  40.6            -74.0 R     
+## 10 BMT      4 Av… 53rd St                  40.6            -74.0 R     
+## # ... with 1,858 more rows, and 26 more variables: route2 &lt;chr&gt;,
+## #   route3 &lt;chr&gt;, route4 &lt;chr&gt;, route5 &lt;chr&gt;, route6 &lt;chr&gt;, route7 &lt;chr&gt;,
+## #   route8 &lt;int&gt;, route9 &lt;int&gt;, route10 &lt;int&gt;, route11 &lt;int&gt;,
+## #   entrance_type &lt;chr&gt;, entry &lt;chr&gt;, exit_only &lt;chr&gt;, vending &lt;chr&gt;,
+## #   staffing &lt;chr&gt;, staff_hours &lt;chr&gt;, ada &lt;lgl&gt;, ada_notes &lt;chr&gt;,
+## #   free_crossover &lt;lgl&gt;, north_south_street &lt;chr&gt;,
+## #   east_west_street &lt;chr&gt;, corner &lt;chr&gt;, entrance_latitude &lt;dbl&gt;,
+## #   entrance_longitude &lt;dbl&gt;, station_location &lt;chr&gt;,
+## #   entrance_location &lt;chr&gt;</code></pre>
+<pre class="r"><code>View(subway_data)
+str(subway_data)</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    1868 obs. of  32 variables:
+##  $ division          : chr  &quot;BMT&quot; &quot;BMT&quot; &quot;BMT&quot; &quot;BMT&quot; ...
+##  $ line              : chr  &quot;4 Avenue&quot; &quot;4 Avenue&quot; &quot;4 Avenue&quot; &quot;4 Avenue&quot; ...
+##  $ station_name      : chr  &quot;25th St&quot; &quot;25th St&quot; &quot;36th St&quot; &quot;36th St&quot; ...
+##  $ station_latitude  : num  40.7 40.7 40.7 40.7 40.7 ...
+##  $ station_longitude : num  -74 -74 -74 -74 -74 ...
+##  $ route1            : chr  &quot;R&quot; &quot;R&quot; &quot;N&quot; &quot;N&quot; ...
+##  $ route2            : chr  NA NA &quot;R&quot; &quot;R&quot; ...
+##  $ route3            : chr  NA NA NA NA ...
+##  $ route4            : chr  NA NA NA NA ...
+##  $ route5            : chr  NA NA NA NA ...
+##  $ route6            : chr  NA NA NA NA ...
+##  $ route7            : chr  NA NA NA NA ...
+##  $ route8            : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ route9            : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ route10           : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ route11           : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ entrance_type     : chr  &quot;Stair&quot; &quot;Stair&quot; &quot;Stair&quot; &quot;Stair&quot; ...
+##  $ entry             : chr  &quot;YES&quot; &quot;YES&quot; &quot;YES&quot; &quot;YES&quot; ...
+##  $ exit_only         : chr  NA NA NA NA ...
+##  $ vending           : chr  &quot;YES&quot; &quot;YES&quot; &quot;YES&quot; &quot;YES&quot; ...
+##  $ staffing          : chr  &quot;FULL&quot; &quot;NONE&quot; &quot;FULL&quot; &quot;FULL&quot; ...
+##  $ staff_hours       : chr  NA NA NA NA ...
+##  $ ada               : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ ada_notes         : chr  NA NA NA NA ...
+##  $ free_crossover    : logi  FALSE FALSE TRUE TRUE TRUE TRUE ...
+##  $ north_south_street: chr  &quot;4th Ave&quot; &quot;4th Ave&quot; &quot;4th Ave&quot; &quot;4th Ave&quot; ...
+##  $ east_west_street  : chr  &quot;25th St&quot; &quot;25th St&quot; &quot;36th St&quot; &quot;36th St&quot; ...
+##  $ corner            : chr  &quot;SE&quot; &quot;SW&quot; &quot;NW&quot; &quot;NE&quot; ...
+##  $ entrance_latitude : num  40.7 40.7 40.7 40.7 40.7 ...
+##  $ entrance_longitude: num  -74 -74 -74 -74 -74 ...
+##  $ station_location  : chr  &quot;(40.660397, -73.998091)&quot; &quot;(40.660397, -73.998091)&quot; &quot;(40.655144, -74.003549)&quot; &quot;(40.655144, -74.003549)&quot; ...
+##  $ entrance_location : chr  &quot;(40.660323, -73.997952)&quot; &quot;(40.660489, -73.998220)&quot; &quot;(40.654490, -74.004499)&quot; &quot;(40.654365, -74.004113)&quot; ...
+##  - attr(*, &quot;spec&quot;)=List of 2
+##   ..$ cols   :List of 32
+##   .. ..$ Division          : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Line              : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Station Name      : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Station Latitude  : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_double&quot; &quot;collector&quot;
+##   .. ..$ Station Longitude : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_double&quot; &quot;collector&quot;
+##   .. ..$ Route1            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Route2            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Route3            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Route4            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Route5            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Route6            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Route7            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Route8            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_integer&quot; &quot;collector&quot;
+##   .. ..$ Route9            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_integer&quot; &quot;collector&quot;
+##   .. ..$ Route10           : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_integer&quot; &quot;collector&quot;
+##   .. ..$ Route11           : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_integer&quot; &quot;collector&quot;
+##   .. ..$ Entrance Type     : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Entry             : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Exit Only         : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Vending           : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Staffing          : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Staff Hours       : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ ADA               : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_logical&quot; &quot;collector&quot;
+##   .. ..$ ADA Notes         : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Free Crossover    : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_logical&quot; &quot;collector&quot;
+##   .. ..$ North South Street: list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ East West Street  : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Corner            : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Entrance Latitude : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_double&quot; &quot;collector&quot;
+##   .. ..$ Entrance Longitude: list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_double&quot; &quot;collector&quot;
+##   .. ..$ Station Location  : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ Entrance Location : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   ..$ default: list()
+##   .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_guess&quot; &quot;collector&quot;
+##   ..- attr(*, &quot;class&quot;)= chr &quot;col_spec&quot;</code></pre>
+<pre class="r"><code>head(subway_data, 10)</code></pre>
+<pre><code>## # A tibble: 10 x 32
+##    division line  station_name station_latitude station_longitu… route1
+##    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;                   &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt; 
+##  1 BMT      4 Av… 25th St                  40.7            -74.0 R     
+##  2 BMT      4 Av… 25th St                  40.7            -74.0 R     
+##  3 BMT      4 Av… 36th St                  40.7            -74.0 N     
+##  4 BMT      4 Av… 36th St                  40.7            -74.0 N     
+##  5 BMT      4 Av… 36th St                  40.7            -74.0 N     
+##  6 BMT      4 Av… 45th St                  40.6            -74.0 R     
+##  7 BMT      4 Av… 45th St                  40.6            -74.0 R     
+##  8 BMT      4 Av… 45th St                  40.6            -74.0 R     
+##  9 BMT      4 Av… 45th St                  40.6            -74.0 R     
+## 10 BMT      4 Av… 53rd St                  40.6            -74.0 R     
+## # ... with 26 more variables: route2 &lt;chr&gt;, route3 &lt;chr&gt;, route4 &lt;chr&gt;,
+## #   route5 &lt;chr&gt;, route6 &lt;chr&gt;, route7 &lt;chr&gt;, route8 &lt;int&gt;, route9 &lt;int&gt;,
+## #   route10 &lt;int&gt;, route11 &lt;int&gt;, entrance_type &lt;chr&gt;, entry &lt;chr&gt;,
+## #   exit_only &lt;chr&gt;, vending &lt;chr&gt;, staffing &lt;chr&gt;, staff_hours &lt;chr&gt;,
+## #   ada &lt;lgl&gt;, ada_notes &lt;chr&gt;, free_crossover &lt;lgl&gt;,
+## #   north_south_street &lt;chr&gt;, east_west_street &lt;chr&gt;, corner &lt;chr&gt;,
+## #   entrance_latitude &lt;dbl&gt;, entrance_longitude &lt;dbl&gt;,
+## #   station_location &lt;chr&gt;, entrance_location &lt;chr&gt;</code></pre>
+<pre class="r"><code>tail(subway_data, 10)</code></pre>
+<pre><code>## # A tibble: 10 x 32
+##    division line  station_name station_latitude station_longitu… route1
+##    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;                   &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt; 
+##  1 IRT      Whit… Simpson St               40.8            -73.9 2     
+##  2 IRT      Whit… Simpson St               40.8            -73.9 2     
+##  3 IRT      Whit… Simpson St               40.8            -73.9 2     
+##  4 IRT      Whit… Simpson St               40.8            -73.9 2     
+##  5 IRT      Whit… Simpson St               40.8            -73.9 2     
+##  6 IRT      Whit… Wakefield-2…             40.9            -73.9 2     
+##  7 IRT      Whit… Wakefield-2…             40.9            -73.9 2     
+##  8 IRT      Whit… Wakefield-2…             40.9            -73.9 2     
+##  9 IRT      Flus… 34 St Hudso…             40.8            -74.0 7     
+## 10 IRT      Flus… 34 St Hudso…             40.8            -74.0 7     
+## # ... with 26 more variables: route2 &lt;chr&gt;, route3 &lt;chr&gt;, route4 &lt;chr&gt;,
+## #   route5 &lt;chr&gt;, route6 &lt;chr&gt;, route7 &lt;chr&gt;, route8 &lt;int&gt;, route9 &lt;int&gt;,
+## #   route10 &lt;int&gt;, route11 &lt;int&gt;, entrance_type &lt;chr&gt;, entry &lt;chr&gt;,
+## #   exit_only &lt;chr&gt;, vending &lt;chr&gt;, staffing &lt;chr&gt;, staff_hours &lt;chr&gt;,
+## #   ada &lt;lgl&gt;, ada_notes &lt;chr&gt;, free_crossover &lt;lgl&gt;,
+## #   north_south_street &lt;chr&gt;, east_west_street &lt;chr&gt;, corner &lt;chr&gt;,
+## #   entrance_latitude &lt;dbl&gt;, entrance_longitude &lt;dbl&gt;,
+## #   station_location &lt;chr&gt;, entrance_location &lt;chr&gt;</code></pre>
+<pre class="r"><code>skimr::skim(subway_data)</code></pre>
+<pre><code>## Skim summary statistics
+##  n obs: 1868 
+##  n variables: 32 
+## 
+## ── Variable type:character ───────────────────────────────────────────────────────────────────
+##            variable missing complete    n min max empty n_unique
+##           ada_notes    1793       75 1868   5  17     0       10
+##              corner      32     1836 1868   1   4     0        8
+##            division       0     1868 1868   3   3     0        3
+##    east_west_street      35     1833 1868   6  24     0      352
+##   entrance_location       0     1868 1868  22  23     0     1857
+##       entrance_type       0     1868 1868   4   9     0        7
+##               entry       0     1868 1868   2   3     0        2
+##           exit_only    1812       56 1868   3   3     0        1
+##                line       0     1868 1868   5  17     0       36
+##  north_south_street      29     1839 1868   4  23     0      307
+##              route1       0     1868 1868   1   2     0       24
+##              route2     848     1020 1868   1   2     0       20
+##              route3    1374      494 1868   1   2     0       18
+##              route4    1547      321 1868   1   1     0       13
+##              route5    1630      238 1868   1   1     0       12
+##              route6    1741      127 1868   1   1     0        7
+##              route7    1788       80 1868   1   2     0        7
+##         staff_hours    1828       40 1868  16  33     0       16
+##            staffing       0     1868 1868   4   6     0        4
+##    station_location       0     1868 1868  20  23     0      472
+##        station_name       0     1868 1868   4  39     0      356
+##             vending       0     1868 1868   2   3     0        2
+## 
+## ── Variable type:integer ─────────────────────────────────────────────────────────────────────
+##  variable missing complete    n mean   sd p0 p25 p50 p75 p100     hist
+##   route10    1845       23 1868 3    0     3   3   3   3    3 ▁▁▁▇▁▁▁▁
+##   route11    1845       23 1868 7    0     7   7   7   7    7 ▁▁▁▇▁▁▁▁
+##    route8    1820       48 1868 2.98 1.94  1   1   4   5    5 ▇▁▁▁▁▂▁▇
+##    route9    1840       28 1868 2.54 1.17  2   2   2   2    5 ▇▁▁▁▁▁▁▂
+## 
+## ── Variable type:logical ─────────────────────────────────────────────────────────────────────
+##        variable missing complete    n mean                      count
+##             ada       0     1868 1868 0.25 FAL: 1400, TRU: 468, NA: 0
+##  free_crossover       0     1868 1868 0.78 TRU: 1448, FAL: 420, NA: 0
+## 
+## ── Variable type:numeric ─────────────────────────────────────────────────────────────────────
+##            variable missing complete    n   mean    sd     p0    p25
+##   entrance_latitude       0     1868 1868  40.73 0.07   40.58  40.69
+##  entrance_longitude       0     1868 1868 -73.86 3.42  -74.03 -73.99
+##    station_latitude       0     1868 1868  40.73 0.07   40.58  40.69
+##   station_longitude       0     1868 1868 -73.94 0.057 -74.03 -73.99
+##     p50    p75   p100     hist
+##   40.73  40.77  40.9  ▂▂▅▇▇▂▃▂
+##  -73.96 -73.91  73.99 ▇▁▁▁▁▁▁▁
+##   40.73  40.77  40.9  ▂▂▅▇▇▂▃▂
+##  -73.96 -73.91 -73.76 ▃▇▅▃▂▁▁▁</code></pre>
+</div>
+</div>
+</div>
 
 
 

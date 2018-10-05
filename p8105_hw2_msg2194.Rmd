@@ -12,3 +12,26 @@ knitr::opts_chunk$set(echo = TRUE)
   library(tidyverse)
 
 ```
+# Problem 1
+
+## Read and clean the NYC transit data for entrances and exits at each subway station.
+
+### First, import the csv file and clean the variable names.
+```{r import1}
+subway_data = read_csv(file = "./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
+names(subway_data)
+subway_data = janitor::clean_names(subway_data)
+names(subway_data)
+```
+
+### Second, inspect the dataset using various tools.
+```{r inspect1}
+subway_data
+View(subway_data)
+str(subway_data)
+head(subway_data, 10)
+tail(subway_data, 10)
+skimr::skim(subway_data)
+```
+
+
