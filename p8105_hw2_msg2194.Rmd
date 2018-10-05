@@ -5,8 +5,6 @@ date: "October 4, 2018"
 output: html_document
 ---
 
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
   library(tidyverse)
@@ -17,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Read and clean the NYC transit data for entrances and exits at each subway station.
 
 ### First, import the csv file and clean the variable names.
-```{r import1}
+```{r import}
 subway_data = read_csv(file = "./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
 names(subway_data)
 subway_data = janitor::clean_names(subway_data)
@@ -25,13 +23,49 @@ names(subway_data)
 ```
 
 ### Second, inspect the dataset using various tools.
-```{r inspect1}
+```{r inspect}
 subway_data
-View(subway_data)
 str(subway_data)
 head(subway_data, 10)
 tail(subway_data, 10)
 skimr::skim(subway_data)
 ```
+
+### Retain the variables: line, station name, station latitude / longitude, routes served, entry, vending, entrance type, and ADA compliance.
+```{r select}
+select(subway_data, line, station_name, station_latitude,
+       station_longitude, entry, vending, entrance_type, ada, route1, route2,
+       route3, route4, route5, route6, route7, route8, route9, route10, route11)
+```
+
+
+### Convert the entry variable from character (YES vs NO) to a logical variable (the ifelse or recode function may be useful).
+```{r convert_entry}
+mutate(subway_data, 
+       entry = recode(entry, "YES" = TRUE, "NO" = FALSE, .default = NA, .missing = NA))
+```
+### Write a short paragraph about this dataset – explain briefly what variables the dataset contains, describe your data cleaning steps so far, and give the dimension (rows x columns) of the resulting dataset. Are these data tidy?
+
+Originally, this dataset 1,868 observations and 32 variables. I cleaned the variable names and then selected only the 19 variables requested in the problem set. With this selection the modified dataset still has 1,868 observations and 19 variables. These data are not tidy because the routes served span across 11 variables, which would have to be collapsed into one variable for the data to be tidy. Also, these data represent entrances as the smallest unit, rather than stations.
+
+### How many distinct stations are there? Note that stations are identified both by name and by line (e.g. 125th St A/B/C/D; 125st 1; 125st 4/5); the distinct function may be useful here.
+
+```{r distinct_stations}
+distinct(subway_data, station_name, line, ada, .keep_all = FALSE) %>% 
+  count(ada)
+```
+There are a total of 465 distinct stations.
+
+### How many stations are ADA compliant?
+Of the 465 distinct stations, 84 are ADA compliant.
+
+### What proportion of station entrances / exits without vending allow entrance?
+```{r no_vending_yes_entry}
+filter(subway_data, entry == "YES", vending == "NO")
+```
+This filter yields a tibble consisting of 69 observations meeting the criteria for entrances/exits that allow entry but do not allow vending. Thus, the proportion is 69 out of 1,868.
+
+### Reformat data so that route number and route name are distinct variables. How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
+
 
 
